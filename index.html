@@ -12,7 +12,6 @@
             --row-height: 2.5rem;
         }
 
-        /* Configuración del fondo con imagen al 100% de opacidad */
         body {
             position: relative;
             min-height: 100vh;
@@ -38,7 +37,6 @@
             color: #3b82f6;
         }
 
-        /* Estilos para la Hoja de Entrada y Verificación */
         .excel-container {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             font-size: 0.875rem;
@@ -80,7 +78,6 @@
             filter: grayscale(1);
         }
 
-        /* Paneles con mayor opacidad blanca para legibilidad sobre fondo vivo */
         .glass-panel {
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(4px);
@@ -89,7 +86,7 @@
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-800">
 
-    <div class="max-w-5xl mx-auto py-8 px-4">
+    <div class="max-w-6xl mx-auto py-8 px-4">
         <!-- Encabezado de la Página -->
         <header class="flex items-center justify-center gap-6 mb-10">
             <img src="https://traxion.global/hubfs/Traxion_LogotipoCT_Gris.png" alt="Logo Traxion" class="h-14 w-auto object-contain">
@@ -100,12 +97,15 @@
         </header>
 
         <!-- Navegación de Pestañas -->
-        <div class="flex border-b border-slate-200 mb-6 justify-center bg-white/80 backdrop-blur-md rounded-t-lg shadow-sm">
+        <div class="flex border-b border-slate-200 mb-6 justify-center bg-white/80 backdrop-blur-md rounded-t-lg shadow-sm flex-wrap">
             <button onclick="switchTab('input-tab')" id="btn-input-tab" class="px-6 py-3 font-medium transition-colors tab-active">
                 1. Hoja de Entrada
             </button>
             <button onclick="switchTab('verify-tab')" id="btn-verify-tab" class="px-6 py-3 font-medium text-slate-500 hover:text-blue-500 transition-colors">
                 2. Hoja de Verificación
+            </button>
+            <button onclick="switchTab('history-tab')" id="btn-history-tab" class="px-6 py-3 font-medium text-slate-500 hover:text-blue-500 transition-colors">
+                3. Historial de Embarques
             </button>
         </div>
 
@@ -114,7 +114,7 @@
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h2 class="text-xl font-semibold">Registro de Unidades de Almacenamiento</h2>
-                    <p class="text-sm text-slate-500">Ingresa las HU confirmadas en la delivery (Máximo 30 líneas).</p>
+                    <p class="text-sm text-slate-500">Ingresa las tarimas/HU confirmadas en la delivery (Máximo 30 líneas).</p>
                 </div>
                 <button onclick="clearMaster()" class="px-3 py-1 text-xs font-semibold text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors bg-white/80">
                     Limpiar Todo
@@ -123,9 +123,7 @@
             
             <div class="excel-container relative border border-slate-200 rounded-lg overflow-hidden bg-white/95 flex">
                 <div class="line-numbers w-12 flex-shrink-0" id="num-sidebar">
-                    <script>
-                        for(let i=1; i<=30; i++) document.write(i + '<br>');
-                    </script>
+                    <script>for(let i=1; i<=30; i++) document.write(i + '<br>');</script>
                 </div>
                 <textarea id="master-textarea" 
                     class="excel-textarea w-full h-[1220px] px-4"
@@ -135,17 +133,15 @@
             </div>
             <div class="mt-3 flex justify-between items-center px-2">
                 <span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest bg-white/40 px-2 rounded">Capacidad fija: 30 líneas</span>
-                <div class="text-sm font-medium text-slate-700 bg-white/40 px-2 rounded" id="line-counter">
-                    Líneas: 0 / 30
-                </div>
+                <div class="text-sm font-medium text-slate-700 bg-white/40 px-2 rounded" id="line-counter">Líneas: 0 / 30</div>
             </div>
         </div>
 
         <!-- Contenido Pestaña 2: Verificación -->
         <div id="verify-tab" class="hidden glass-panel rounded-xl shadow-lg p-6 border border-white/20">
-            
             <!-- Sección de Metadatos -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-white/80 rounded-lg border border-slate-100 shadow-sm">
+                <!-- Fila 1 -->
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">PGI</label>
                     <input type="text" id="input-pgi" class="p-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm shadow-sm bg-white" placeholder="Ingresar PGI">
@@ -157,6 +153,30 @@
                 <div class="flex flex-col gap-1">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Rampa</label>
                     <input type="text" id="input-rampa" class="p-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm shadow-sm bg-white" placeholder="Ingresar Rampa">
+                </div>
+
+                <!-- Fila 2 -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">No. de Entrega</label>
+                    <input type="text" id="input-entrega" class="p-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm shadow-sm bg-white" placeholder="Ingresar No. de Entrega">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Chofer</label>
+                    <input type="text" id="input-chofer" class="p-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm shadow-sm bg-white" placeholder="Ingresar Chofer">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Supervisor</label>
+                    <input type="text" id="input-supervisor" class="p-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm shadow-sm bg-white" placeholder="Firma interna">
+                </div>
+
+                <!-- Fila 3 -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Folio Transferencia <span class="text-[8px] text-blue-500 normal-case">(Autoguardado)</span></label>
+                    <input type="text" id="input-folio-transf" class="p-2 border border-slate-200 rounded-md bg-blue-50 text-blue-700 text-sm shadow-inner focus:outline-none cursor-not-allowed font-black tracking-widest" readonly placeholder="Cargando...">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Fecha y Hora</label>
+                    <input type="text" id="input-fecha" class="p-2 border border-slate-200 rounded-md bg-slate-100 text-slate-500 text-sm shadow-inner focus:outline-none cursor-not-allowed font-medium text-center" readonly>
                 </div>
             </div>
 
@@ -174,42 +194,34 @@
 
             <div id="status-box" class="hidden mb-6 p-4 rounded-lg border shadow-sm"></div>
 
-            <!-- Recuadro único de Verificación -->
             <div class="excel-container relative border border-slate-200 rounded-lg overflow-hidden bg-white/95 flex mb-8">
                 <div class="line-numbers w-12 flex-shrink-0" id="verify-num-sidebar">
-                    <script>
-                        for(let i=1; i<=30; i++) document.write(i + '<br>');
-                    </script>
+                    <script>for(let i=1; i<=30; i++) document.write(i + '<br>');</script>
                 </div>
                 <textarea id="verify-textarea" 
                     class="excel-textarea w-full h-[1220px] px-4"
-                    placeholder="Pega aquí los HU para verificar..."
+                    placeholder="Pega aquí las tarimas para verificar..."
                     oninput="handleVerifyInput(this)"
                     onkeydown="limitLines(event)"></textarea>
             </div>
 
-            <!-- Panel de Control de Carga y Botón PDF -->
+            <!-- Panel Inferior Exportación -->
             <div class="pt-6 border-t border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <!-- Mensaje de Estado de Carga -->
                 <div id="load-status-container" class="flex-1 w-full p-4 rounded-xl border flex flex-col gap-2 bg-white shadow-md">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Estado de la Carga</span>
                         <span id="load-status-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase">Incompleta</span>
                     </div>
                     <div id="load-status-msg" class="text-sm font-semibold text-slate-800">Esperando datos...</div>
-                    
                     <div id="missing-data-area" class="hidden mt-2">
-                        <!-- Faltantes -->
                         <div id="missing-section" class="mb-2">
                             <p class="text-[10px] text-slate-400 uppercase font-bold">Faltan por ingresar:</p>
                             <div id="missing-data-list" class="flex flex-wrap gap-1 mt-1 text-[11px] font-mono"></div>
                         </div>
-                        <!-- Errores -->
                         <div id="errors-section" class="mb-2 hidden">
                             <p class="text-[10px] text-red-500 uppercase font-bold">Datos Inválidos (No en Hoja 1):</p>
                             <div id="errors-data-list" class="flex flex-wrap gap-1 mt-1 text-[11px] font-mono"></div>
                         </div>
-                        <!-- Duplicados -->
                         <div id="duplicates-section" class="hidden">
                             <p class="text-[10px] text-yellow-600 uppercase font-bold">Datos Duplicados:</p>
                             <div id="duplicates-data-list" class="flex flex-wrap gap-1 mt-1 text-[11px] font-mono"></div>
@@ -217,21 +229,63 @@
                     </div>
                 </div>
 
-                <!-- Botón Exportar PDF -->
-                <button id="btn-export-pdf" onclick="exportToPDF()" disabled class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap self-stretch md:self-auto">
+                <!-- Botón Trigger de Guardado y PDF -->
+                <button id="btn-export-pdf" onclick="handleExportAndSave()" disabled class="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap self-stretch md:self-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                     </svg>
-                    Exportar a PDF
+                    Exportar a PDF y Guardar
                 </button>
             </div>
         </div>
+
+        <!-- Contenido Pestaña 3: Historial -->
+        <div id="history-tab" class="hidden glass-panel rounded-xl shadow-lg p-6 border border-white/20 min-h-[600px]">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-semibold">Historial de Embarques</h2>
+                    <p class="text-sm text-slate-500">Consulta los registros guardados y reimprime documentos.</p>
+                </div>
+            </div>
+
+            <!-- Filtros de búsqueda -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6 bg-slate-100 p-4 rounded-lg border border-slate-200">
+                <input type="date" id="filter-date" oninput="renderHistory()" class="p-2 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+                <input type="text" id="filter-folio" placeholder="Buscar Folio..." oninput="renderHistory()" class="p-2 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+                <input type="text" id="filter-pgi" placeholder="Buscar PGI..." oninput="renderHistory()" class="p-2 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+                <input type="text" id="filter-entrega" placeholder="Buscar No. Entrega..." oninput="renderHistory()" class="p-2 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+                <input type="text" id="filter-supervisor" placeholder="Buscar Supervisor..." oninput="renderHistory()" class="p-2 border border-slate-300 rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+
+            <!-- Tabla de datos -->
+            <div class="overflow-x-auto bg-white rounded-lg shadow-sm border border-slate-200">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+                        <tr>
+                            <th class="p-3 border-b border-slate-200">Fecha y Hora</th>
+                            <th class="p-3 border-b border-slate-200">Folio</th>
+                            <th class="p-3 border-b border-slate-200">PGI</th>
+                            <th class="p-3 border-b border-slate-200">Entrega</th>
+                            <th class="p-3 border-b border-slate-200">Supervisor</th>
+                            <th class="p-3 border-b border-slate-200 text-center">Tarimas</th>
+                            <th class="p-3 border-b border-slate-200 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="text-sm">
+                        <tr><td colspan="7" class="p-6 text-center text-slate-500">Cargando base de datos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center text-slate-500/60 text-xs font-bold tracking-widest uppercase">
+            Created By C. Huerta
+        </div>
     </div>
 
-    <!-- CONTENEDOR PARA PDF (FUERA DE PANTALLA) -->
+    <!-- CONTENEDOR INVISIBLE PARA PDF -->
     <div id="pdf-offscreen-container">
         <div id="pdf-printable-content" style="padding: 10mm; background: white; width: 190mm; margin: 0 auto; min-height: 270mm;">
-            <!-- Encabezado del PDF -->
             <div style="display: flex; align-items: center; justify-content: center; gap: 20px; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
                 <img src="https://traxion.global/hubfs/Traxion_LogotipoCT_Gris.png" style="height: 40px; width: auto; object-contain: contain;">
                 <div style="text-align: center;">
@@ -244,46 +298,186 @@
                 <tr>
                     <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #f8f8f8;">
                         <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">PGI</div>
-                        <div id="pdf-pgi-val" style="font-size: 16px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                        <div id="pdf-pgi-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
                     </td>
                     <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #f8f8f8;">
                         <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">Línea de Transporte</div>
-                        <div id="pdf-linea-val" style="font-size: 16px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                        <div id="pdf-linea-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
                     </td>
                     <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #f8f8f8;">
                         <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">Rampa</div>
-                        <div id="pdf-rampa-val" style="font-size: 16px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                        <div id="pdf-rampa-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
                     </td>
+                </tr>
+                <tr>
+                    <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #fff;">
+                        <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">No. de Entrega</div>
+                        <div id="pdf-entrega-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                    </td>
+                    <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #fff;">
+                        <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">Chofer</div>
+                        <div id="pdf-chofer-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                    </td>
+                    <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #fff;">
+                        <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">Supervisor</div>
+                        <div id="pdf-supervisor-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 33.33%; padding: 10px; border: 1px solid #ddd; background: #f8f8f8;">
+                        <div style="font-size: 10px; font-weight: 800; color: #666; text-transform: uppercase;">Folio Transferencia</div>
+                        <div id="pdf-folio-transf-val" style="font-size: 14px; font-weight: bold; color: #000; margin-top: 4px;">-</div>
+                    </td>
+                    <td colspan="2" style="width: 66.67%; padding: 10px; border: 1px solid #ddd; background: #f8f8f8;"></td>
                 </tr>
             </table>
 
             <div id="pdf-items-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; border-top: 1px solid #eee;"></div>
 
-            <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; text-align: center; font-size: 10px; color: #999;">
+            <div style="margin-top: 25px; border-top: 2px solid #000; padding-top: 15px; text-align: right; padding-right: 15px;">
+                <span style="font-size: 14px; font-weight: 900; color: #000; text-transform: uppercase;">Total de Tarimas Enviadas: </span>
+                <span id="pdf-total-tarimas" style="font-size: 18px; font-weight: 900; color: #2563eb; background: #f1f5f9; padding: 5px 12px; border-radius: 4px; border: 1px solid #cbd5e1; margin-left: 8px;">0</span>
+            </div>
+
+            <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; text-align: center; font-size: 10px; color: #999;">
                 *** Fin del documento - TRAXION Recibo y Exportación ***
             </div>
         </div>
     </div>
 
-    <script>
-        function limitLines(e) {
+    <!-- SCRIPT TIPO MODULE PARA FIREBASE Y LÓGICA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'traxion-app';
+        let db, auth, currentUser = null;
+        let recordsHistory = []; // Almacenamiento en memoria de los registros
+
+        // Inicializar Firebase
+        try {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCXVKGecqKv9dwEmJQmRBaa4SuYPOq0N4A",
+                authDomain: "traxion-transferencias.firebaseapp.com",
+                projectId: "traxion-transferencias",
+                storageBucket: "traxion-transferencias.firebasestorage.app",
+                messagingSenderId: "841481239590",
+                appId: "1:841481239590:web:9f796faff661a0e92bfae7",
+                measurementId: "G-8J9RSFTZ9T"
+            };
+            
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+            initAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                if (currentUser) {
+                    listenToHistory();
+                }
+            });
+        } catch (e) {
+            console.warn("Base de datos en modo local (Firebase omitido).", e);
+            updateFolioDisplay(); // Inicializar local si falla internet
+        }
+
+        // Listener de base de datos en tiempo real
+        function listenToHistory() {
+            const historyRef = collection(db, 'artifacts', appId, 'public', 'data', 'historial_embarques');
+            
+            onSnapshot(historyRef, (snapshot) => {
+                recordsHistory = [];
+                snapshot.forEach(doc => {
+                    recordsHistory.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Ordenar del más reciente al más antiguo basado en el folio
+                recordsHistory.sort((a, b) => b.folio.localeCompare(a.folio));
+                
+                updateFolioDisplay(); // Recalcula folio de acuerdo a lo que hay en BD
+                window.renderHistory(); // Actualiza la tabla del historial
+            }, (error) => {
+                console.error("Error obteniendo historial: ", error);
+            });
+        }
+
+        // ---------- LÓGICA DEL RELOJ Y EL FOLIO ----------
+        function updateDateTimeField() {
+            const now = new Date();
+            const dateField = document.getElementById('input-fecha');
+            if(dateField) {
+                dateField.value = now.toLocaleString('es-MX', { 
+                    year: 'numeric', month: '2-digit', day: '2-digit', 
+                    hour: '2-digit', minute: '2-digit', second: '2-digit' 
+                });
+            }
+            
+            // Detectar cambio de día
+            const todayStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
+            if (window.lastDayStr && window.lastDayStr !== todayStr) {
+                updateFolioDisplay();
+            }
+            window.lastDayStr = todayStr;
+        }
+        setInterval(updateDateTimeField, 1000);
+        updateDateTimeField();
+
+        function getJulianDay(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return String(Math.floor(diff / oneDay)).padStart(3, '0');
+        }
+
+        function updateFolioDisplay() {
+            const now = new Date();
+            const todayIso = now.toISOString().split('T')[0];
+            const julianDay = getJulianDay(now);
+            
+            // Contamos cuántos registros existen HOY en la base de datos
+            let todaysCount = 0;
+            if (recordsHistory.length > 0) {
+                todaysCount = recordsHistory.filter(r => r.fechaIso === todayIso).length;
+            } else {
+                // Fallback a localStorage por si se usa sin internet
+                let localSeq = JSON.parse(localStorage.getItem('folioSequence')) || { date: '', count: 0 };
+                if(localSeq.date === todayIso) todaysCount = localSeq.count;
+            }
+
+            const nextCount = todaysCount + 1;
+            const folioField = document.getElementById('input-folio-transf');
+            if(folioField) folioField.value = julianDay + String(nextCount).padStart(2, '0');
+        }
+
+        // ---------- LÓGICA DE LA INTERFAZ ----------
+        window.limitLines = function(e) {
             const textarea = e.target;
             const lines = textarea.value.split('\n');
             if (e.key === 'Enter' && lines.length >= 30) e.preventDefault();
-        }
+        };
 
-        function handleInput(textarea) {
+        window.handleInput = function(textarea) {
             let lines = textarea.value.split('\n');
             if (lines.length > 30) textarea.value = lines.slice(0, 30).join('\n');
             updateCount();
-            if (!document.getElementById('verify-tab').classList.contains('hidden')) validateData();
-        }
+            if (!document.getElementById('verify-tab').classList.contains('hidden')) window.validateData();
+        };
 
-        function handleVerifyInput(textarea) {
+        window.handleVerifyInput = function(textarea) {
             let lines = textarea.value.split('\n');
             if (lines.length > 30) textarea.value = lines.slice(0, 30).join('\n');
-            validateData();
-        }
+            window.validateData();
+        };
 
         function updateCount() {
             const text = document.getElementById('master-textarea').value;
@@ -293,28 +487,29 @@
             counter.className = lines.length >= 30 ? "text-sm font-bold text-blue-600" : "text-sm font-medium text-slate-500";
         }
 
-        function switchTab(tabId) {
-            document.getElementById('input-tab').classList.toggle('hidden', tabId !== 'input-tab');
-            document.getElementById('verify-tab').classList.toggle('hidden', tabId !== 'verify-tab');
-            document.getElementById('btn-input-tab').className = `px-6 py-3 font-medium transition-colors ${tabId === 'input-tab' ? 'tab-active' : 'text-slate-500 hover:text-blue-500'}`;
-            document.getElementById('btn-verify-tab').className = `px-6 py-3 font-medium transition-colors ${tabId === 'verify-tab' ? 'tab-active' : 'text-slate-500 hover:text-blue-500'}`;
-            if (tabId === 'verify-tab') validateData();
-        }
+        window.switchTab = function(tabId) {
+            ['input-tab', 'verify-tab', 'history-tab'].forEach(id => {
+                document.getElementById(id).classList.toggle('hidden', tabId !== id);
+                document.getElementById('btn-' + id).className = `px-6 py-3 font-medium transition-colors ${tabId === id ? 'tab-active' : 'text-slate-500 hover:text-blue-500'}`;
+            });
+            if (tabId === 'verify-tab') window.validateData();
+            if (tabId === 'history-tab') window.renderHistory();
+        };
 
-        function clearMaster() {
+        window.clearMaster = function() {
             document.getElementById('master-textarea').value = '';
             updateCount();
-            if (!document.getElementById('verify-tab').classList.contains('hidden')) validateData();
-        }
+            if (!document.getElementById('verify-tab').classList.contains('hidden')) window.validateData();
+        };
 
-        function clearVerify() {
+        window.clearVerify = function() {
             document.getElementById('verify-textarea').value = '';
             document.getElementById('status-box').classList.add('hidden');
-            ['input-pgi', 'input-linea', 'input-rampa'].forEach(id => document.getElementById(id).value = '');
-            validateData();
-        }
+            ['input-pgi', 'input-linea', 'input-rampa', 'input-entrega', 'input-chofer', 'input-supervisor'].forEach(id => document.getElementById(id).value = '');
+            window.validateData();
+        };
 
-        function validateData() {
+        window.validateData = function() {
             const masterText = document.getElementById('master-textarea').value;
             const masterDataRaw = masterText.split('\n').map(line => line.trim()).filter(line => line !== "");
             const masterData = [...new Set(masterDataRaw)];
@@ -327,8 +522,7 @@
 
             let errorCount = 0, duplicateCount = 0;
             const foundInVerify = new Set();
-            const errorsList = [];
-            const duplicatesList = [];
+            const errorsList = [], duplicatesList = [];
 
             verifyValues.forEach((val) => {
                 if (!masterData.includes(val)) {
@@ -355,17 +549,13 @@
             } else {
                 statusBox.classList.add('hidden');
             }
-        }
+        };
 
         function updateLoadStatus(isComplete, missing, errors, duplicates, totalMaster, totalFound) {
             const container = document.getElementById('load-status-container');
             const badge = document.getElementById('load-status-badge');
             const msg = document.getElementById('load-status-msg');
             const missingArea = document.getElementById('missing-data-area');
-            const missingSection = document.getElementById('missing-section');
-            const errorsSection = document.getElementById('errors-section');
-            const duplicatesSection = document.getElementById('duplicates-section');
-            
             const btnPdf = document.getElementById('btn-export-pdf');
 
             if (totalMaster === 0) {
@@ -392,55 +582,102 @@
                 badge.innerText = "Incompleta / Errores";
                 msg.className = "text-sm font-semibold text-red-700";
                 msg.innerText = `Verificación pendiente. (${totalFound}/${totalMaster} correctos)`;
-                
                 missingArea.classList.remove('hidden');
                 
-                // Mostrar faltantes
-                if (missing.length > 0) {
-                    missingSection.classList.remove('hidden');
-                    document.getElementById('missing-data-list').innerHTML = missing.map(item => `<span class="bg-slate-200 text-slate-800 px-2 py-0.5 rounded border border-slate-300 font-bold">${item}</span>`).join('');
-                } else {
-                    missingSection.classList.add('hidden');
-                }
-
-                // Mostrar errores
-                if (errors.length > 0) {
-                    errorsSection.classList.remove('hidden');
-                    document.getElementById('errors-data-list').innerHTML = errors.map(item => `<span class="bg-red-200 text-red-800 px-2 py-0.5 rounded border border-red-300 font-bold">${item}</span>`).join('');
-                } else {
-                    errorsSection.classList.add('hidden');
-                }
-
-                // Mostrar duplicados
-                if (duplicates.length > 0) {
-                    duplicatesSection.classList.remove('hidden');
-                    document.getElementById('duplicates-data-list').innerHTML = duplicates.map(item => `<span class="bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded border border-yellow-400 font-bold">${item}</span>`).join('');
-                } else {
-                    duplicatesSection.classList.add('hidden');
-                }
+                document.getElementById('missing-section').classList.toggle('hidden', missing.length === 0);
+                document.getElementById('missing-data-list').innerHTML = missing.map(i => `<span class="bg-slate-200 px-2 py-0.5 rounded font-bold">${i}</span>`).join('');
+                
+                document.getElementById('errors-section').classList.toggle('hidden', errors.length === 0);
+                document.getElementById('errors-data-list').innerHTML = errors.map(i => `<span class="bg-red-200 text-red-800 px-2 py-0.5 rounded font-bold">${i}</span>`).join('');
+                
+                document.getElementById('duplicates-section').classList.toggle('hidden', duplicates.length === 0);
+                document.getElementById('duplicates-data-list').innerHTML = duplicates.map(i => `<span class="bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded font-bold">${i}</span>`).join('');
 
                 btnPdf.disabled = true;
             }
         }
 
-        async function exportToPDF() {
+        // ---------- LÓGICA DE GUARDADO Y EXPORTACIÓN ----------
+        window.handleExportAndSave = async function() {
             const btn = document.getElementById('btn-export-pdf');
             const originalText = btn.innerHTML;
+            btn.innerHTML = "Guardando en BD...";
+            btn.disabled = true;
 
-            document.getElementById('pdf-pgi-val').innerText = (document.getElementById('input-pgi').value || "N/A").toUpperCase();
-            document.getElementById('pdf-linea-val').innerText = (document.getElementById('input-linea').value || "N/A").toUpperCase();
-            document.getElementById('pdf-rampa-val').innerText = (document.getElementById('input-rampa').value || "N/A").toUpperCase();
-            document.getElementById('pdf-date-val').innerText = "FECHA: " + new Date().toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' }).toUpperCase();
+            try {
+                // 1. Recopilar Datos
+                const todayIso = new Date().toISOString().split('T')[0];
+                const folio = document.getElementById('input-folio-transf').value;
+                const pgi = (document.getElementById('input-pgi').value || "000000").toUpperCase();
+                
+                const lines = document.getElementById('verify-textarea').value.split('\n');
+                const tarimas = [];
+                for(let i = 0; i < 30; i++) {
+                    const val = lines[i]?.trim() || "";
+                    if(val !== "") tarimas.push(val);
+                }
+
+                const recordData = {
+                    folio: folio,
+                    pgi: pgi,
+                    linea: (document.getElementById('input-linea').value || "N/A").toUpperCase(),
+                    rampa: (document.getElementById('input-rampa').value || "N/A").toUpperCase(),
+                    entrega: (document.getElementById('input-entrega').value || "N/A").toUpperCase(),
+                    chofer: (document.getElementById('input-chofer').value || "N/A").toUpperCase(),
+                    supervisor: (document.getElementById('input-supervisor').value || "N/A").toUpperCase(),
+                    fechaCompleta: document.getElementById('input-fecha').value,
+                    fechaIso: todayIso, // Sirve para filtrar más facil
+                    tarimas: tarimas,
+                    totalTarimas: tarimas.length
+                };
+
+                // 2. Guardar en Firebase (Si está inicializado)
+                if (currentUser && db) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'historial_embarques'), {
+                        ...recordData,
+                        timestamp: serverTimestamp()
+                    });
+                } else {
+                    // Fallback si no hay conexión
+                    let localSeq = { date: todayIso, count: parseInt(folio.slice(-2)) };
+                    localStorage.setItem('folioSequence', JSON.stringify(localSeq));
+                    updateFolioDisplay(); 
+                }
+
+                // 3. Generar PDF
+                btn.innerHTML = "Generando PDF...";
+                await generatePDF(recordData);
+
+                // Limpiar la hoja tras exportar exitosamente
+                window.clearVerify();
+                window.switchTab('history-tab');
+
+            } catch (error) {
+                console.error("Error Guardando/Exportando:", error);
+                alert("Ocurrió un error. Revisa la consola.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        // Función que construye el recuadro invisible y usa HTML2PDF
+        async function generatePDF(data) {
+            document.getElementById('pdf-pgi-val').innerText = data.pgi;
+            document.getElementById('pdf-linea-val').innerText = data.linea;
+            document.getElementById('pdf-rampa-val').innerText = data.rampa;
+            document.getElementById('pdf-entrega-val').innerText = data.entrega;
+            document.getElementById('pdf-chofer-val').innerText = data.chofer;
+            document.getElementById('pdf-supervisor-val').innerText = data.supervisor;
+            document.getElementById('pdf-folio-transf-val').innerText = data.folio;
+            document.getElementById('pdf-date-val').innerText = "FECHA DE EMISIÓN: " + data.fechaCompleta;
 
             const itemsGrid = document.getElementById('pdf-items-grid');
             itemsGrid.innerHTML = "";
-
-            const verifyText = document.getElementById('verify-textarea').value;
-            const lines = verifyText.split('\n');
             
-            // Generar siempre las 30 líneas en el PDF
+            // Llenar las 30 líneas para el PDF
             for(let i = 0; i < 30; i++) {
-                const val = lines[i]?.trim() || "---";
+                const val = data.tarimas[i] || "---";
                 itemsGrid.innerHTML += `
                     <div style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; align-items: center;">
                         <span style="width: 25px; font-weight: bold; color: #999; font-size: 11px;">${String(i + 1).padStart(2, '0')}</span>
@@ -449,27 +686,72 @@
                 `;
             }
 
+            document.getElementById('pdf-total-tarimas').innerText = data.totalTarimas;
+
             const element = document.getElementById('pdf-printable-content');
             const opt = {
                 margin: 0,
-                filename: `REPORTE_TRANSFERENCIA_${(document.getElementById('input-pgi').value || 'EXP').replace(/\s+/g, '_')}.pdf`,
+                filename: `TRANSFER_${data.pgi.replace(/\s+/g, '_')}.pdf`,
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { scale: 4, useCORS: true, letterRendering: true, scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            try {
-                btn.innerHTML = "Generando archivo...";
-                btn.disabled = true;
-                await html2pdf().set(opt).from(element).save();
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            } catch (error) {
-                console.error("Error PDF:", error);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+            await html2pdf().set(opt).from(element).save();
         }
+
+        // ---------- LÓGICA DE HISTORIAL ----------
+        window.renderHistory = function() {
+            const filterDate = document.getElementById('filter-date').value;
+            const filterFolio = document.getElementById('filter-folio').value.toLowerCase();
+            const filterPgi = document.getElementById('filter-pgi').value.toLowerCase();
+            const filterEntrega = document.getElementById('filter-entrega').value.toLowerCase();
+            const filterSupervisor = document.getElementById('filter-supervisor').value.toLowerCase();
+
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+
+            let filtered = recordsHistory;
+            
+            if (filterDate) filtered = filtered.filter(r => r.fechaIso === filterDate);
+            if (filterFolio) filtered = filtered.filter(r => r.folio.toLowerCase().includes(filterFolio));
+            if (filterPgi) filtered = filtered.filter(r => r.pgi.toLowerCase().includes(filterPgi));
+            if (filterEntrega) filtered = filtered.filter(r => r.entrega.toLowerCase().includes(filterEntrega));
+            if (filterSupervisor) filtered = filtered.filter(r => r.supervisor.toLowerCase().includes(filterSupervisor));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">No se encontraron registros.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(r => {
+                // Se inyecta la data como string JSON para evitar perder el objeto
+                const dataString = encodeURIComponent(JSON.stringify(r));
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td class="p-3 whitespace-nowrap">${r.fechaCompleta}</td>
+                        <td class="p-3 font-bold text-blue-600">${r.folio}</td>
+                        <td class="p-3 font-medium">${r.pgi}</td>
+                        <td class="p-3">${r.entrega}</td>
+                        <td class="p-3">${r.supervisor}</td>
+                        <td class="p-3 text-center"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">${r.totalTarimas}</span></td>
+                        <td class="p-3 text-center">
+                            <button onclick="window.reprintPDF('${dataString}')" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded shadow-sm transition-colors">Reimprimir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.reprintPDF = async function(encodedData) {
+            try {
+                const data = JSON.parse(decodeURIComponent(encodedData));
+                await generatePDF(data);
+            } catch (error) {
+                console.error("Error reimprimiendo: ", error);
+                alert("Ocurrió un error al intentar reimprimir el documento.");
+            }
+        };
     </script>
 </body>
 </html>
