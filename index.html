@@ -441,17 +441,17 @@
 
         function updateFolioDisplay() {
             const now = new Date();
-            const todayIso = now.toISOString().split('T')[0];
+            // Creamos la fecha local exacta para evitar saltos por zona horaria UTC
+            const localDateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
             const julianDay = getJulianDay(now);
             
-            // Contamos cuántos registros existen HOY en la base de datos
             let todaysCount = 0;
             if (recordsHistory.length > 0) {
-                todaysCount = recordsHistory.filter(r => r.fechaIso === todayIso).length;
+                // CORRECCIÓN: Filtramos usando el propio día juliano en lugar de la fecha ISO
+                todaysCount = recordsHistory.filter(r => r.folio && r.folio.startsWith(julianDay)).length;
             } else {
-                // Fallback a localStorage por si se usa sin internet
                 let localSeq = JSON.parse(localStorage.getItem('folioSequence')) || { date: '', count: 0 };
-                if(localSeq.date === todayIso) todaysCount = localSeq.count;
+                if(localSeq.date === localDateStr) todaysCount = localSeq.count;
             }
 
             const nextCount = todaysCount + 1;
@@ -631,17 +631,16 @@
                     totalTarimas: tarimas.length
                 };
 
-                // 2. Guardar en Firebase (Si está inicializado)
+                // 2. Guardar en Firebase y actualizar el caché local en paralelo
+                // (Usamos slice(3) por si en algún momento pasas de 99 entregas al día)
+                let localSeq = { date: todayIso, count: parseInt(folio.slice(3)) };
+                localStorage.setItem('folioSequence', JSON.stringify(localSeq));
+
                 if (currentUser && db) {
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'historial_embarques'), {
                         ...recordData,
                         timestamp: serverTimestamp()
                     });
-                } else {
-                    // Fallback si no hay conexión
-                    let localSeq = { date: todayIso, count: parseInt(folio.slice(-2)) };
-                    localStorage.setItem('folioSequence', JSON.stringify(localSeq));
-                    updateFolioDisplay(); 
                 }
 
                 // 3. Generar PDF
