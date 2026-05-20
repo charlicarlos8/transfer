@@ -354,6 +354,7 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'traxion-app';
         let db, auth, currentUser = null;
         let recordsHistory = []; // Almacenamiento en memoria de los registros
+        let showAllRecords = false; // Control de vista de historial (10 limit default)
 
         // Inicializar Firebase
         try {
@@ -701,26 +702,38 @@
 
         // ---------- LÓGICA DE HISTORIAL ----------
         window.renderHistory = function() {
-            const filterDate = document.getElementById('filter-date').value;
-            const filterFolio = document.getElementById('filter-folio').value.toLowerCase();
-            const filterPgi = document.getElementById('filter-pgi').value.toLowerCase();
-            const filterEntrega = document.getElementById('filter-entrega').value.toLowerCase();
-            const filterSupervisor = document.getElementById('filter-supervisor').value.toLowerCase();
+            const filters = {
+                date: document.getElementById('filter-date').value,
+                folio: document.getElementById('filter-folio').value.toLowerCase(),
+                pgi: document.getElementById('filter-pgi').value.toLowerCase(),
+                entrega: document.getElementById('filter-entrega').value.toLowerCase(),
+                supervisor: document.getElementById('filter-supervisor').value.toLowerCase()
+            };
+
+            // Detectamos si hay alguna búsqueda activa
+            const isSearching = Object.values(filters).some(value => value !== "");
 
             const tbody = document.getElementById('history-table-body');
             tbody.innerHTML = '';
 
             let filtered = recordsHistory;
             
-            if (filterDate) filtered = filtered.filter(r => r.fechaIso === filterDate);
-            if (filterFolio) filtered = filtered.filter(r => r.folio.toLowerCase().includes(filterFolio));
-            if (filterPgi) filtered = filtered.filter(r => r.pgi.toLowerCase().includes(filterPgi));
-            if (filterEntrega) filtered = filtered.filter(r => r.entrega.toLowerCase().includes(filterEntrega));
-            if (filterSupervisor) filtered = filtered.filter(r => r.supervisor.toLowerCase().includes(filterSupervisor));
+            if (filters.date) filtered = filtered.filter(r => r.fechaIso === filters.date);
+            if (filters.folio) filtered = filtered.filter(r => r.folio.toLowerCase().includes(filters.folio));
+            if (filters.pgi) filtered = filtered.filter(r => r.pgi.toLowerCase().includes(filters.pgi));
+            if (filters.entrega) filtered = filtered.filter(r => r.entrega.toLowerCase().includes(filters.entrega));
+            if (filters.supervisor) filtered = filtered.filter(r => r.supervisor.toLowerCase().includes(filters.supervisor));
 
-            if (filtered.length === 0) {
+            const totalResultados = filtered.length;
+
+            if (totalResultados === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">No se encontraron registros.</td></tr>`;
                 return;
+            }
+
+            // Aplicamos el límite visual a 10 solo si NO está buscando y NO ha pedido ver todo
+            if (!isSearching && !showAllRecords) {
+                filtered = filtered.slice(0, 10);
             }
 
             filtered.forEach(r => {
@@ -740,6 +753,32 @@
                     </tr>
                 `;
             });
+
+            // Lógica para mostrar/ocultar el botón de cargar todo el historial
+            if (!isSearching && !showAllRecords && totalResultados > 10) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td colspan="7" class="p-4 text-center bg-slate-50 border-t border-slate-200">
+                            <button onclick="window.toggleShowAll(true)" class="text-blue-600 font-bold text-sm hover:underline py-2 w-full">
+                                Mostrar todo el historial (${totalResultados} registros)
+                            </button>
+                        </td>
+                    </tr>`;
+            } else if (!isSearching && showAllRecords && totalResultados > 10) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td colspan="7" class="p-4 text-center bg-slate-50 border-t border-slate-200">
+                            <button onclick="window.toggleShowAll(false)" class="text-slate-500 font-bold text-sm hover:underline py-2 w-full">
+                                Ver solo los últimos 10
+                            </button>
+                        </td>
+                    </tr>`;
+            }
+        };
+
+        window.toggleShowAll = function(val) {
+            showAllRecords = val;
+            window.renderHistory();
         };
 
         window.reprintPDF = async function(encodedData) {
