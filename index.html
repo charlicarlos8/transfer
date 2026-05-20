@@ -137,7 +137,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // CONFIGURACION FIREBASE (DEBES PEGAR TU CONFIG REAL AQUÍ)
+        // CONFIGURACION FIREBASE (¡DEBES PEGAR TU CONFIG REAL AQUÍ!)
         const firebaseConfig = {
                 apiKey: "AIzaSyCXVKGecqKv9dwEmJQmRBaa4SuYPOq0N4A",
                 authDomain: "traxion-transferencias.firebaseapp.com",
@@ -155,9 +155,17 @@
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-            signInAnonymously(auth);
+            
+            signInAnonymously(auth).catch(error => {
+                console.error("Error de Autenticación:", error);
+                alert("Error de conexión. Asegúrate de haber pegado tus claves reales de Firebase en el código.");
+            });
+            
             onAuthStateChanged(auth, (user) => { if(user) listenToHistory(); });
-        } catch (e) { console.warn("Firebase no conectado."); }
+        } catch (e) { 
+            console.warn("Firebase no conectado.", e); 
+            alert("No se pudo iniciar Firebase. Verifica el bloque 'firebaseConfig'.");
+        }
 
         function listenToHistory() {
             onSnapshot(collection(db, "historial_embarques"), (snapshot) => {
@@ -165,6 +173,9 @@
                 recordsHistory.sort((a, b) => b.folio.localeCompare(a.folio));
                 updateFolioDisplay();
                 window.renderHistory();
+            }, (error) => {
+                console.error("Error leyendo Firebase:", error);
+                alert("Error de Permisos: Ve a Firebase y actualiza las reglas de Firestore.");
             });
         }
 
