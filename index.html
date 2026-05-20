@@ -138,7 +138,15 @@
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         // CONFIGURACION FIREBASE (DEBES PEGAR TU CONFIG REAL AQUÍ)
-        const firebaseConfig = { apiKey: "AIza...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
+        const firebaseConfig = {
+                apiKey: "AIzaSyCXVKGecqKv9dwEmJQmRBaa4SuYPOq0N4A",
+                authDomain: "traxion-transferencias.firebaseapp.com",
+                projectId: "traxion-transferencias",
+                storageBucket: "traxion-transferencias.firebasestorage.app",
+                messagingSenderId: "841481239590",
+                appId: "1:841481239590:web:9f796faff661a0e92bfae7",
+                measurementId: "G-8J9RSFTZ9T"
+            };
         
         let db, auth, recordsHistory = [];
         let showAllRecords = false; // Control de vista de historial
